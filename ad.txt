@@ -1,0 +1,35 @@
+Informe o tempo medio entre clientes (s): 16.67
+Informe o tempo medio de servico (s): 10.0
+Informe o tempo a ser simulado (s): 864000.0
+ocupacao: 0.601327
+tamanho da fila: 20
+E[N]: 1.521206
+E[W]: 25.301800
+Erro de Little: 0.000000
+
+Informe o tempo medio entre clientes (s): 12.5
+Informe o tempo medio de servico (s): 10.0
+Informe o tempo a ser simulado (s): 864000.0
+ocupacao: 0.807189
+tamanho da fila: 36
+E[N]: 4.268102
+E[W]: 53.161424
+Erro de Little: -0.000000
+
+Informe o tempo medio entre clientes (s): 11.11
+Informe o tempo medio de servico (s): 10.0
+Informe o tempo a ser simulado (s): 864000.0
+ocupacao: 0.897119
+tamanho da fila: 54
+E[N]: 7.990522
+E[W]: 88.689435
+Erro de Little: -0.000000
+
+Informe o tempo medio entre clientes (s): 10.10
+Informe o tempo medio de servico (s): 10.0
+Informe o tempo a ser simulado (s): 864000.0
+ocupacao: 0.991833
+tamanho da fila: 296
+E[N]: 86.285419
+E[W]: 868.413991
+Erro de Little: -0.000000
