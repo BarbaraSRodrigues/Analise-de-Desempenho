@@ -75,6 +75,7 @@ int main(){
     le_parametros(&params);
 
     // Variaveis de controle da simulacao
+    double tempo_coleta = 10.0; // Define o primeiro ponto de coleta em 10 segundos
     double tempo_decorrido = 0.0;
     double tempo_chegada = (-1.0/params.media_chegada) * log(uniforme());
     double tempo_saida = DBL_MAX;
@@ -94,11 +95,21 @@ int main(){
     inicia_little(&e_w_chegada);
     inicia_little(&e_w_saida);
 
+    // Utilizado para arrumar o erro de comparacao entre double
+    double epsilon = 0.000001;
+
+    // // Auxilia no grafico
+    // FILE *fp = fopen("resultados.txt", "w");
+    // if (!fp) {
+    //     printf("Erro ao abrir o arquivo para gravação!\n");
+    //     return -1;
+    // }
+
     while(tempo_decorrido < params.tempo_simulacao){
-        tempo_decorrido = min(tempo_chegada, tempo_saida);
+        tempo_decorrido = min(min(tempo_chegada, tempo_saida), tempo_coleta);
         // printf("%lF\n", tempo_decorrido);
 
-        if(tempo_decorrido == tempo_chegada){
+        if(fabs(tempo_decorrido - tempo_chegada) < epsilon){
             // Chegada
             // A cabeca da fila eh quem esta em atendimento
             if(!fila){
@@ -122,7 +133,7 @@ int main(){
             e_w_chegada.soma_areas += (tempo_decorrido - e_w_chegada.tempo_anterior) * e_w_chegada.no_eventos;
             e_w_chegada.no_eventos++;
             e_w_chegada.tempo_anterior = tempo_decorrido;
-        } else if(tempo_decorrido == tempo_saida){
+        } else if(fabs(tempo_decorrido - tempo_saida) < epsilon){
             // Saida
             fila--; // Tira o cabeca da fila
             if(fila){
@@ -131,7 +142,30 @@ int main(){
                 tempo_saida = tempo_decorrido + tempo_servico;
 
                 soma_ocupacao += tempo_servico;
-            }else{
+            } else if(fabs(tempo_decorrido - tempo_coleta) < epsilon){
+                e_n.soma_areas += e_n.no_eventos * (tempo_decorrido - e_n.tempo_anterior);
+                e_w_chegada.soma_areas += e_w_chegada.no_eventos * (tempo_decorrido - e_w_chegada.tempo_anterior);
+                e_w_saida.soma_areas += e_w_saida.no_eventos * (tempo_decorrido - e_w_saida.tempo_anterior);
+
+                e_n.tempo_anterior = tempo_decorrido;
+                e_w_chegada.tempo_anterior = tempo_decorrido;
+                e_w_saida.tempo_anterior = tempo_decorrido;
+
+                double e_n_calculo_intervalo = e_n.soma_areas / tempo_decorrido;
+                double e_w_calculo_intervalo = (e_w_chegada.soma_areas - e_w_saida.soma_areas) / e_w_chegada.no_eventos;
+                double lambda_intervalo = e_w_chegada.no_eventos / tempo_decorrido;
+
+                // Auxilia no grafico e mostra o erro de Little
+                // printf("Erro de Little: %.10lf\n",
+                //         e_n_calculo_intervalo - lambda_intervalo * e_w_calculo_intervalo);
+                // fprintf(fp, "Em tempo %lf:\nErro de Little: %.20lf\n\n",
+                //         tempo_decorrido,
+                //         e_n_calculo_intervalo - lambda_intervalo * e_w_calculo_intervalo);
+
+                // Redefinir tempo_coleta para o proximo ponto de coleta
+                tempo_coleta += 10.0;
+
+            } else{
                 tempo_saida = DBL_MAX;
             }
 
